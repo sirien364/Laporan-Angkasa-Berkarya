@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>DOKUMENT PENTING</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#444;
+    padding:20px;
+    color:white;
+}
+
+.header{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:20px;
+    margin-bottom:30px;
+    flex-wrap:wrap;
+}
+
+.logo{
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    object-fit:cover;
+}
+
+.title{
+    font-size:45px;
+    font-weight:bold;
+    text-align:center;
+}
+
+.container{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.card{
+    background:#4973c4;
+    border-radius:12px;
+    padding:15px;
+}
+
+.area{
+    font-size:24px;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+
+.buttons{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.btn{
+    min-width:130px;
+    padding:14px;
+    border-radius:12px;
+    text-decoration:none;
+    text-align:center;
+    color:white;
+    font-size:20px;
+    font-weight:bold;
+    border:3px solid white;
+    transition:0.2s;
+}
+
+.btn:hover{
+    transform:scale(1.05);
+}
+
+.hijau{
+    background:#00b140;
+}
+
+.merah{
+    background:#e60000;
+}
+
+.loading{
+    text-align:center;
+    font-size:22px;
+    margin-top:40px;
+}
+
+.error{
+    text-align:center;
+    font-size:22px;
+    color:#ffaaaa;
+    margin-top:40px;
+}
+
+@media(max-width:700px){
+
+    .title{
+        font-size:28px;
+    }
+
+    .btn{
+        width:100%;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="header">
+
+    <!-- GANTI LOGO -->
+    <img class="logo"
+         src="SMA.jpg">
+
+    <div class="title">
+        DOKUMENT PENTING
+    </div>
+
+</div>
+
+<div class="container" id="container">
+
+    <div class="loading">
+        Loading...
+    </div>
+
+</div>
+
+<script>
+
+// ======================================
+// GANTI DENGAN LINK WEB APP
+// ======================================
+
+const API_URL =
+"https://script.google.com/macros/s/AKfycbxkuzNpcsynWdDEO3E5glwCfR2Uzh7s3Bd6XpX2oM3V1hIzIdjQmJZ2AFgts3bSrg3e5w/exec?sheet=DATA2";
+
+// ======================================
+// AMBIL DATA
+// ======================================
+
+fetch(API_URL)
+
+.then(response => response.json())
+
+.then(data => tampilkanData(data))
+
+.catch(error => {
+
+    console.log(error);
+
+    document.getElementById("container").innerHTML =
+
+    `<div class="error">
+        Gagal mengambil data
+     </div>`;
+
+});
+
+// ======================================
+// TAMPILKAN DATA
+// ======================================
+
+function tampilkanData(data){
+
+    const container = document.getElementById("container");
+
+    container.innerHTML = "";
+
+    // ==========================
+    // GROUP BERDASARKAN AREA
+    // ==========================
+
+    const grouped = {};
+
+    data.forEach(item => {
+
+        if(!grouped[item.area]){
+
+            grouped[item.area] = [];
+
+        }
+
+        grouped[item.area].push(item);
+
+    });
+
+    // ==========================
+    // LOOP AREA
+    // ==========================
+
+    for(const area in grouped){
+
+        const card = document.createElement("div");
+
+        card.className = "card";
+
+        // ======================
+        // JUDUL AREA
+        // ======================
+
+        const title = document.createElement("div");
+
+        title.className = "area";
+
+        title.innerText = area;
+
+        // ======================
+        // WRAPPER BUTTON
+        // ======================
+
+        const buttons = document.createElement("div");
+
+        buttons.className = "buttons";
+
+        // ======================
+        // LOOP SEKOLAH
+        // ======================
+
+        grouped[area].forEach(sekolah => {
+
+            const a = document.createElement("a");
+
+            a.className = "btn";
+
+            a.innerText = sekolah.nama;
+
+            // ==================
+            // JIKA ADA LINK
+            // ==================
+
+            if(sekolah.link &&
+               sekolah.link !== ""){
+
+                a.classList.add("hijau");
+
+                a.href = sekolah.link;
+
+                a.target = "_blank";
+
+            }
+
+            // ==================
+            // JIKA TIDAK ADA
+            // ==================
+
+            else{
+
+                a.classList.add("merah");
+
+            }
+
+            buttons.appendChild(a);
+
+        });
+
+        // ======================
+        // MASUKKAN KE CARD
+        // ======================
+
+        card.appendChild(title);
+
+        card.appendChild(buttons);
+
+        container.appendChild(card);
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
